@@ -1,8 +1,6 @@
-//Arreglo
-
 #include <stdio.h>
-#include <stdbool.h>
 #include <stdlib.h>
+#include <math.h>
 
 typedef struct TipoElementoRep {
     int clave;
@@ -19,6 +17,44 @@ typedef struct ListaRep {
 typedef ListaRep* Lista;
 
 
+int comparar_listas(Lista l1, Lista l2) {
+    int cantidad_mayores_l1 = 0;
+    int cantidad_mayores_l2 = 0;
+    int i;
+    
+    // Comparar los elementos de ambas listas posición por posición
+    for (i = 0; i < l1->cantidad && i < l2->cantidad; i++) {
+        if (l1->elementos[i]->clave > l2->elementos[i]->clave) {
+            cantidad_mayores_l1++;
+        } else if (l1->elementos[i]->clave < l2->elementos[i]->clave) {
+            cantidad_mayores_l2++;
+        }
+    }
+    
+    // Si ambas listas tienen la misma cantidad de elementos, entonces la que tenga
+    // más claves mayores será la mayor
+    if (l1->cantidad == l2->cantidad) {
+        if (cantidad_mayores_l1 > cantidad_mayores_l2) {
+            printf("L1 es  mayor");
+            return 1; // L1 > L2
+        } else if (cantidad_mayores_l1 < cantidad_mayores_l2) {
+            printf("L1 es  menor");
+            return -1; // L1 < L2
+        } else {
+            printf("L1 y L2 son iguales");
+            return 0; // L1 = L2
+        }
+    }
+    
+    // Si no tienen la misma cantidad de elementos, entonces la lista más larga será la mayor
+    if (l1->cantidad > l2->cantidad) {
+        printf("L1 es  mayor");
+        return 1; // L1 > L2
+    } else {
+        printf("L1 es  menor");
+        return -1; // L1 < L2
+    }
+}
 
 TipoElemento te_crear(int clave) {
     TipoElemento elemento = (TipoElemento) malloc(sizeof(TipoElementoRep));
@@ -80,12 +116,11 @@ void agregar_elementos_a_lista(Lista lista) {
 
     for (int i = 0; i < cantidad_elementos; i++) {
         int clave;
-        char valor[10];
-        printf("Ingrese la clave del elemento[%d], dejando un espacio agregue el valor que va a contener: ", i);
-        scanf("%d %s", &clave, &valor);
+        printf("Ingrese la clave del elemento[%d]: ", i);
+        scanf("%d", &clave);
 
         // Crear un nuevo elemento con la clave ingresada y valor NULL
-        TipoElemento elemento = te_crear_con_valor(clave, valor);
+        TipoElemento elemento = te_crear(clave);
 
         if (elemento != NULL) {
             // Agregar el elemento a la lista
@@ -98,24 +133,6 @@ void agregar_elementos_a_lista(Lista lista) {
     }
 }
 
-bool es_sublista(Lista lista1, Lista lista2) {
-    int i, j;
-    for (i = 0; i < lista2->cantidad; i++) {
-        int encontrada = 0;
-        for (j = 0; j < lista1->cantidad; j++) {
-            if (lista2->elementos[i]->valor == lista1->elementos[j]->valor) {
-                encontrada = 1;
-                break;
-            } else {
-                return false;
-            }
-        }
-        if (!encontrada) {
-            return false;
-        }
-    }
-    return true;
-}
 
 int main() {
     Lista lista = l_crear();
@@ -124,10 +141,8 @@ int main() {
     agregar_elementos_a_lista(lista2);
     l_mostrar(lista);
     l_mostrar(lista2);
-    if (es_sublista(lista, lista2))
-    {
-        printf("\nEs sublista");
-    }
+    printf("\n");
+    comparar_listas(lista, lista2);
     
     // liberar memoria de la lista y sus elementos
     // ...
